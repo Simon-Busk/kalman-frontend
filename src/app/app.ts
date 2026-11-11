@@ -24,8 +24,8 @@ import { RouterOutlet, RouterLink } from '@angular/router';
       nav a {
         padding: 0.4rem 1rem;
         text-decoration: none;
-        background: #2c3e50;
-        color: white;
+        background: var(--button-bg);
+        color: var(--button-text);
         border-radius: 4px;
       }
 

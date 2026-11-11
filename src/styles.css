@@ -1,1 +1,42 @@
-/* You can add global styles to this file, and also import other style files */
+
+:root {
+  --bg: #ffffff;
+  --text: #111111;
+  --button-bg: #2c3e50;
+  --button-text: #ffffff;
+  --live-state-bg: #f9f9f9;
+  --hint-text: #555;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #2c3e50;
+    --text: #ffffff;
+    --button-bg: whitesmoke;
+    --button-text: #2c3e50;
+    --hint-text: lightgray;
+    --live-state-bg: #2c3e60;
+  }
+}
+
+#home {
+  padding: 1rem;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  padding-left: 15px;
+}
+
+button {
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--button-text);
+  border-radius: 4px;
+  margin: 5px;
+}
+
+button:hover {
+  background: #1baf7a;
+}

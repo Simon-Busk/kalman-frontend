@@ -6,10 +6,12 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [RouterLink],
   template: `
+    <div id="home">
     <h1>Welcome</h1>
     <button routerLink="/kalman">Go to Kalman Filter</button>
     <br>
     <button routerLink="/simulation">Go to a Simulation</button>
+    </div>
   `,
 })
 export class HomeComponent {}
