@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div class="simulation-demo">
+  <h2>Kalman Filter – Simulation Demo</h2>
+
+  <!-- ── Configuration ───────────────────────────────────────────── -->
+  <section *ngIf="!initialised">
+    <h3>1. Configuration</h3>
+
+    <label>
+      Number of simulated measurements
+      <input type="number" [(ngModel)]="numberOfSimulations" step="1" min="1" />
+    </label>
+
+    <label>
+      Variance of the simulated measurements
+      <input type="number" [(ngModel)]="variance" step="0.1" min="0.1" />
+    </label>
+
+    <label>
+      Mean of the simulated measurements
+      <input type="number" [(ngModel)]="mean" step="1" />
+    </label>
+
+    <button (click)="initialise()" [disabled]="loading()">
+      {{ loading() ? 'Simulating…' : 'Simulate data' }}
+    </button>
+
+    <br />
+    <p>
+      Use this to go back to the main Kalman demo where you can add 1 measurement at a time.
+    </p>
+    <button routerLink="/kalman">Go to Kalman demo</button>
+  </section>
+
+  <!-- ── Step input ───────────────────────────────────────────────── -->
+  <section *ngIf="initialised">
+    <h3>2. Results</h3>
+
+    <div class="step-input">
+      <button (click)="resetFilter()" class="reset">Reset simulation</button>
+    </div>
+
+    <!-- Results table -->
+    <table *ngIf="history().length > 0">
+      <thead>
+      <tr>
+        <th>Step</th>
+        <th>Measurement z</th>
+        <th>KF Estimate x̂</th>
+        <th>Uncertainty P</th>
+        <th>Kalman Gain K</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let r of history()">
+        <td>{{ r.step }}</td>
+        <td>{{ r.measurement | number: '1.4-4' }}</td>
+        <td>{{ r.estimate | number: '1.4-4' }}</td>
+        <td>{{ r.uncertainty | number: '1.6-6' }}</td>
+        <td>{{ r.kalmanGain | number: '1.4-4' }}</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <!-- Visual table -->
+    <ng-container *ngIf="history().length > 0">
+      <h3 class="scale-heading">Position on scale</h3>
+      <p class="scale-subtext">
+        True value: {{ trueValue }} &nbsp;|&nbsp; Scale: {{ scaleMin() | number: '1.2-2' }} –
+        {{ scaleMax() | number: '1.2-2' }}
+      </p>
+
+      <table>
+        <thead>
+        <tr>
+          <th class="col-left">Step</th>
+          <th class="col-left col-scale">Scale</th>
+          <th>|z − true|</th>
+          <th>|x&#x302; − true|</th>
+          <th>KF better by</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let r of history()">
+          <td class="col-left">{{ r.step }}</td>
+          <td class="col-left">
+            <div class="scale-bar">
+              <!-- true value: grey anchor -->
+              <div class="marker marker-true" [style.left.%]="toPercent(trueValue)"></div>
+              <!-- raw measurement: blue -->
+              <div class="marker marker-meas" [style.left.%]="toPercent(r.measurement)"></div>
+              <!-- KF estimate: green -->
+              <div class="marker marker-est" [style.left.%]="toPercent(r.estimate)"></div>
+            </div>
+          </td>
+          <td [class.error-hi]="errMeas(r) > errEst(r)">
+            {{ errMeas(r) | number: '1.4-4' }}
+          </td>
+          <td [class.error-lo]="errEst(r) <= errMeas(r)">
+            {{ errEst(r) | number: '1.4-4' }}
+          </td>
+          <td [class.error-lo]="improvement(r) > 0" [class.error-hi]="improvement(r) < 0">
+            {{ improvement(r) | number: '1.4-4' }}
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!-- Legend -->
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot true-dot"></span>True value</span>
+        <span class="legend-item"><span class="legend-dot meas"></span>Raw measurement</span>
+        <span class="legend-item"><span class="legend-dot est"></span>KF estimate</span>
+      </div>
+    </ng-container>
+  </section>
+
+  <p *ngIf="error" class="error">{{ error }}</p>
+</div>
+</body>
+</html>

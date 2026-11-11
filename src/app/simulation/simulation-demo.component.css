@@ -1,0 +1,150 @@
+.simulation-demo {
+  font-family: monospace;
+  max-width: 900px;
+  margin: 2rem auto;
+}
+section {
+  margin-bottom: 2rem;
+}
+label {
+  display: block;
+  margin: 0.5rem 0;
+}
+input {
+  margin-left: 0.5rem;
+  width: 120px;
+}
+button {
+  margin: 0.5rem 0.25rem;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+}
+button.reset {
+  background: #c0392b;
+  color: white;
+  border: none;
+}
+.hint {
+  color: #666;
+  font-size: 0.85rem;
+}
+.live-state {
+  background: #f4f4f4;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+.error-msg {
+  color: red;
+}
+.step-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.scale-heading {
+  margin-top: 2rem;
+  margin-bottom: 0.25rem;
+}
+.scale-subtext {
+  color: #666;
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 0.4rem 0.6rem;
+  text-align: right;
+}
+th {
+  background: #2c3e50;
+  color: white;
+}
+tr:nth-child(even) {
+  background: #f9f9f9;
+}
+.col-left {
+  text-align: left;
+}
+.col-scale {
+  min-width: 180px;
+  width: 35%;
+}
+
+/* Error colouring */
+.error-hi {
+  color: #c0392b;
+}
+.error-lo {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+/* Scale bar */
+.scale-bar {
+  position: relative;
+  height: 16px;
+  background: #e8e8e8;
+  border-radius: 3px;
+  min-width: 160px;
+  overflow: visible;
+}
+.marker {
+  position: absolute;
+  top: 2px;
+  width: 3px;
+  height: 12px;
+  border-radius: 1px;
+  transform: translateX(-50%);
+}
+.marker-true {
+  background: #888;
+  z-index: 1;
+}
+.marker-meas {
+  background: #2a78d6;
+  opacity: 0.8;
+  z-index: 2;
+}
+.marker-est {
+  background: #1baf7a;
+  z-index: 3;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: #555;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.legend-dot.true-dot {
+  background: #888;
+}
+.legend-dot.meas {
+  background: #2a78d6;
+  opacity: 0.8;
+}
+.legend-dot.est {
+  background: #1baf7a;
+}
