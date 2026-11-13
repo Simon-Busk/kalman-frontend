@@ -10,6 +10,7 @@ import { RouterOutlet, RouterLink } from '@angular/router';
       <a routerLink="/">Home</a>
       <a routerLink="/kalman">Kalman Filter</a>
       <a routerLink="/simulation">Simulation</a>
+      <a routerLink="/2dkalman">2 dimensional Kalman Filter</a>
     </nav>
     <router-outlet />
   `,
