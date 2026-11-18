@@ -17,15 +17,15 @@ import { TrajectoryPlotComponent } from './plot.trajectory-component';
 export class Kalman2dDemoComponent implements OnInit {
   // ── Config ───────────────────────────────────────────────────────────────
   processNoise = [
-    [1, 1],
-    [1, 1],
+    [0.01, 0.01],
+    [0.01, 0.01],
   ];
   measurementNoise = [
     [2, 0],
     [0, 2],
   ];
   firstMeasurement = [25.7, 24.3];
-  trueValue = [25.0, 25];
+  trueValue = [25, 25];
 
   // ── Runtime ──────────────────────────────────────────────────────────────
   nextMeasurement = [25.0, 26.7];
@@ -145,7 +145,10 @@ export class Kalman2dDemoComponent implements OnInit {
     this.ordered().map((r) => ({ x: r.measurement[0], y: r.measurement[1], label: String(r.step) })),
   );
   estPoints = computed(() =>
-    this.ordered().map((r) => ({ x: r.estimate[0], y: r.estimate[1], label: String(r.step) })),
+    this.ordered().map((r) => ({
+      x: r.estimate[0], y: r.estimate[1], label: String(r.step),
+      cov: {xx: r.uncertainty[0][0], xy: r.uncertainty[0][1], yy: r.uncertainty[1][1]},
+    })),
   );
   truePoint = computed(() => ({ x: this.trueValue[0], y: this.trueValue[1] }));
 }

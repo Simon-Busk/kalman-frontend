@@ -64,6 +64,23 @@
   padding: 0.35em 0.25em;
 }
 
+.field-error {
+  grid-column: 1 / -1;     /* span label text + matrix, forces its own row */
+  contain: inline-size;    /* contributes no width, so it can't stretch the columns */
+  box-sizing: border-box;
+  font-size: 0.85rem;
+  color: #d55448;
+  min-height: 1.2em;       /* reserve the line so nothing jumps when it appears */
+}
+
+.input-matrix {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 1em 0.8em;
+  align-items: center;
+  width: fit-content;
+}
+
 /* square brackets */
 .matrix::before,
 .matrix::after, .matrix-table::before, .matrix-table::after {
@@ -77,12 +94,6 @@
 .matrix::before, .matrix-table::before { left: 0;  border-right: none; }
 .matrix::after, .matrix-table::after { right: 0; border-left: none; }
 
-.input-matrix {
-  display: grid;
-  grid-template-columns: repeat(2, max-content);
-  gap: 1em 0.8em;
-  align-items: center;
-}
 
 .input-matrix label {
   display: contents;
@@ -149,5 +160,6 @@ tr:nth-child(even):not(.matrix-table tr) {
   background: var(--live-state-bg);
   color: var(--button-bg);
 }
+
 
 
