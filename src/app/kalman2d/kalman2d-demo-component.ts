@@ -86,7 +86,7 @@ export class Kalman2dDemoComponent implements OnInit {
     this.fieldErrors.set({});
     this.multivariateKalman
       .init({
-        firstMeasurement: this.firstMeasurement,
+        initialState: this.firstMeasurement,
         processNoise: this.processNoise,
         measurementNoise: this.measurementNoise,
       })

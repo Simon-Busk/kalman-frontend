@@ -1,7 +1,7 @@
 // ── Request models ────────────────────────────────────────────────────────────
 
 export interface MultivariateInitRequest {
-  firstMeasurement: number[];
+  initialState: number[];
   processNoise: number[][];
   measurementNoise: number[][];
 }
