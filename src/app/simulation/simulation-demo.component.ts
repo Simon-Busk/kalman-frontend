@@ -90,13 +90,13 @@ export class SimulationDemoComponent implements OnInit {
   }
 
   loadState() {
-    const savedHistory = localStorage.getItem('history');
+    const savedHistory = localStorage.getItem('simhistory');
     if (savedHistory) {
       try {
         this.history.set(JSON.parse(savedHistory));
         this.initialised = true;
       } catch {
-        localStorage.removeItem('history');
+        localStorage.removeItem('simhistory');
         this.error = 'Failure in parsing the history from the local storage';
       }
     }
@@ -117,7 +117,7 @@ export class SimulationDemoComponent implements OnInit {
           this.history.set(s);
           this.initialised = true;
           this.loading.set(false);
-          localStorage.setItem('history', JSON.stringify(this.history()));
+          localStorage.setItem('simhistory', JSON.stringify(this.history()));
         },
         error: (err) => {
           this.error = `Init failed: ${err.message}`;
@@ -129,6 +129,6 @@ export class SimulationDemoComponent implements OnInit {
   resetFilter() {
     this.initialised = false;
     this.history.set([]);
-    localStorage.removeItem('history');
+    localStorage.removeItem('simhistory');
   }
 }

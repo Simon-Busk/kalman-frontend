@@ -10,7 +10,7 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class MultivariateKalmanService {
-  private readonly base = 'http://localhost:8080/api/kalman/multivariate';
+  private readonly base = `http://localhost:8080/api/kalman/`;
 
   /** Options applied to every request – keeps the session cookie alive. */
   private readonly opts = { withCredentials: true };
@@ -21,16 +21,20 @@ export class MultivariateKalmanService {
    * POST /api/kalman/multivariate/init
    * Initialise (or re-initialise) the filter for this browser session.
    */
-  init(request: MultivariateInitRequest): Observable<MultivariateFilterState> {
-    return this.http.post<MultivariateFilterState>(`${this.base}/init`, request, this.opts);
+  init(request: MultivariateInitRequest, id: string): Observable<MultivariateFilterState> {
+    return this.http.post<MultivariateFilterState>(`${this.base}${id}/multivariate/init`, request, this.opts);
   }
 
   /**
    * POST /api/kalman/step
    * Feed one raw measurement and receive the updated estimate.
    */
-  step(request: MultivariateMeasurementRequest): Observable<MultivariateStepResult> {
-    return this.http.post<MultivariateStepResult>(`${this.base}/step`, request, this.opts);
+  step(request: MultivariateMeasurementRequest, id: string): Observable<MultivariateStepResult> {
+    return this.http.post<MultivariateStepResult>(
+      `${this.base}${id}/multivariate/step`,
+      request,
+      this.opts,
+    );
   }
 
   /**
@@ -38,15 +42,18 @@ export class MultivariateKalmanService {
    * Peek at the current filter state without advancing it.
    * Useful for restoring UI state after a page refresh.
    */
-  getState(): Observable<MultivariateFilterState> {
-    return this.http.get<MultivariateFilterState>(`${this.base}/state`, this.opts);
+  getState(id: string): Observable<MultivariateFilterState> {
+    return this.http.get<MultivariateFilterState>(
+      `${this.base}${id}/multivariate/state`,
+      this.opts,
+    );
   }
 
   /**
    * DELETE /api/kalman/reset
    * Wipe the filter so init() can be called again with new parameters.
    */
-  reset(): Observable<void> {
-    return this.http.delete<void>(`${this.base}/reset`, this.opts);
+  reset(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}${id}/multivariate/reset`, this.opts);
   }
 }

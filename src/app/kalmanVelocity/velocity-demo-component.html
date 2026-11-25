@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div class="kalman-multi">
+<h2>1-dimensional Kalman filter demonstration with velocity.</h2>
+
+<section *ngIf="!initialised()">
+  <h3>1. Configure Filter</h3>
+
+
+  <fieldset>
+    <legend>Initial state</legend>
+  <label>
+      Initial position:
+    <input type="number" [(ngModel)]="initialState[0]" step="0.1" />
+  </label>
+  <label>
+      Initial velocity:
+      <input type="number" [(ngModel)]="initialState[1]" step="0.1" />
+  </label>
+  </fieldset>
+
+  <label>
+    Measurement noise for the position measurements
+    <input type="number" [(ngModel)]="measurementNoise[0][0]" step="0.1" min="0.1" />
+  </label>
+
+  <div class="field-error">
+    @if (fieldErrors()['measurementNoise']) {
+      Problem occurred with the measurement noise: {{ fieldErrors()['measurementNoise'] }}
+    }
+  </div>
+
+  <div class="input-matrix">
+    <label>
+      <span>State transition matrix:</span>
+      <div class="matrix-table">
+        <table>
+          <tr>
+            <td><input [(ngModel)]="stateTransition[0][0]" type="number" step="0.1"/></td>
+            <td><input [(ngModel)]="stateTransition[0][1]" type="number" step="0.1"/></td>
+          </tr>
+          <tr>
+            <td><input [(ngModel)]="stateTransition[1][0]" type="number" step="0.1"/></td>
+            <td><input [(ngModel)]="stateTransition[1][1]" type="number" step="0.1"/></td>
+          </tr>
+        </table>
+      </div>
+    </label>
+
+    <div class="field-error">
+      @if (fieldErrors()['stateTransition']) {
+        Problem occurred with the measurement noise matrix: {{ fieldErrors()['stateTransition'] }}
+      }
+    </div>
+
+    <label>
+      <span>Initial covariance matrix (Uncertainty):</span>
+      <div class="matrix-table">
+        <table>
+          <tr>
+            <td><input [(ngModel)]="initialUncertainty[0][0]" type="number" step="0.1"/></td>
+            <td><input [(ngModel)]="initialUncertainty[0][1]" type="number" step="0.1"/></td>
+          </tr>
+          <tr>
+            <td><input [(ngModel)]="initialUncertainty[1][0]" type="number" step="0.1"/></td>
+            <td><input [(ngModel)]="initialUncertainty[1][1]" type="number" step="0.1"/></td>
+          </tr>
+        </table>
+      </div>
+    </label>
+
+    <div class="field-error">
+      @if (fieldErrors()['initialUncertainty']) {
+        Problem occurred with the measurement noise matrix: {{ fieldErrors()['initialUncertainty'] }}
+      }
+    </div>
+  </div>
+
+
+  <fieldset>
+    <legend>True value (Only used for visuals)</legend>
+    <label>
+      True starting position
+    <input type="number" [(ngModel)]="truePosition" step="0.1" />
+    </label>
+    <label>
+      True constant velocity
+    <input type="number" [(ngModel)]="trueVelocity" step="0.1" />
+    </label>
+  </fieldset>
+
+  <button (click)="initialise()" [disabled]="loading()">
+    {{ loading() ? 'Initialising…' : 'Initialise Filter' }}
+  </button>
+
+  <p>
+    Go back to static 1 dimensional case by clicking on button below.
+  </p>
+  <button routerLink="/kalman">Static Kalman filter</button>
+</section>
+
+<section *ngIf="initialised()">
+  <h3>2. Feed Measurements</h3>
+
+  <div class="step-input">
+    <label>
+      New measurement
+      <input type="number" [(ngModel)]="nextMeasurement" step="0.1" />
+    </label>
+    <button (click)="sendStep()" [disabled]="loading()">
+      {{ loading() ? '…' : 'Step →' }}
+    </button>
+    <button (click)="resetFilter()" class="reset">Reset</button>
+  </div>
+
+  <div *ngIf="state" class="live-state">
+    Step <strong>{{ state()!.step }}</strong> &nbsp;|&nbsp;
+    <span class="live-state-label">Estimate x:</span>
+    <div class="vec">
+      <strong>{{ state()!.estimate[0] | number: '1.4-4' }}</strong>
+      <strong>{{ state()!.estimate[1] | number: '1.4-4' }}</strong>
+    </div> &nbsp;|&nbsp;
+    <span class="live-state-label">Uncertainty P:</span>
+    <div class="matrix">
+      <strong>{{ state()!.uncertainty[0][0] | number: '1.4-4' }}</strong>
+      <strong>{{ state()!.uncertainty[0][1] | number: '1.4-4' }}</strong>
+      <strong>{{ state()!.uncertainty[1][0] | number: '1.4-4' }}</strong>
+      <strong>{{ state()!.uncertainty[1][1] | number: '1.4-4' }}</strong>
+    </div>&nbsp;|&nbsp;
+    <span class="live-state-label">Next K:</span>
+    <div class="matrix">
+      <strong>{{ state()!.kalmanGain[0][0] | number: '1.4-4' }}</strong>
+      <strong>{{ state()!.kalmanGain[1][0] | number: '1.4-4' }}</strong>
+    </div> |
+    <span class="live-state-label">True value:</span>
+    <div class="vec">
+      <strong>{{ truePosition}}</strong>
+      <strong>{{ trueVelocity}}</strong>
+    </div>
+
+  </div>
+
+  <br>
+  <p></p>
+  <!-- Results table -->
+  <table *ngIf="history().length > 0">
+    <thead>
+    <tr>
+      <th>Step</th>
+      <th>Measurement z</th>
+      <th>KF Estimate x̂</th>
+      <th>|z - true|</th>
+      <th>|x - true|</th>
+      <th>Velocity diff</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let r of history()">
+      <td>{{ r.step }}</td>
+      <td>
+        <div class="vec">
+          <div>
+            {{ r.measurement[0] | number: '1.4-4' }}
+          </div>
+          <div>
+            {{ r.measurement[1] | number: '1.4-4' }}
+          </div>
+        </div>
+      </td>
+      <td>
+        <div class="vec">
+          <div>{{ r.estimate[0] | number: '1.4-4' }}</div>
+          <div>{{ r.estimate[1] | number: '1.4-4' }}</div>
+        </div>
+      </td>
+      <td>{{ errorMeas(r) | number: '1.4-4' }}</td>
+      <td>{{ errorEstPosition(r) | number: '1.4-4' }}</td>
+      <td>{{ errorEstVelocity(r) | number: '1.4-4' }}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <plot-trajectory-1d
+    [truth]="truthHistory()"
+    [measurements]="measPoints()"
+    [estimates]="estPoints()">
+  </plot-trajectory-1d>
+
+</section>
+
+  <p *ngIf="error" class="error">{{ error }}</p>
+</div>
+</body>
+</html>

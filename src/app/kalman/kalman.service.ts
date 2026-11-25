@@ -40,7 +40,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class KalmanService {
 
-  private readonly base = 'http://localhost:8080/api/kalman';
+  private readonly base = 'http://localhost:8080/api/kalman/1d';
 
   /** Options applied to every request – keeps the session cookie alive. */
   private readonly opts = { withCredentials: true };

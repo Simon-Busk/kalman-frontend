@@ -28,7 +28,7 @@ export class Kalman2dDemoComponent implements OnInit {
   trueValue = [25, 25];
 
   // ── Runtime ──────────────────────────────────────────────────────────────
-  nextMeasurement = [25.0, 26.7];
+  nextMeasurement = [25.0, 25.0];
   initialised = signal(false);
   loading = signal(false);
   error = '';
@@ -54,7 +54,7 @@ export class Kalman2dDemoComponent implements OnInit {
 
   ngOnInit() {
     // Try to restore state if the user already has an active session
-    this.multivariateKalman.getState().subscribe({
+    this.multivariateKalman.getState("static").subscribe({
       next: (s) => {
         this.state.set(s);
         this.initialised.set(true);
@@ -89,11 +89,12 @@ export class Kalman2dDemoComponent implements OnInit {
         initialState: this.firstMeasurement,
         processNoise: this.processNoise,
         measurementNoise: this.measurementNoise,
-      })
+      }, "static")
       .subscribe({
         next: (s) => {
           this.state.set(s);
           this.initialised.set(true);
+          this.nextMeasurement = this.trueValue;
           this.loading.set(false);
           this.history.set([]);
         },
@@ -109,7 +110,7 @@ export class Kalman2dDemoComponent implements OnInit {
     if (this.nextMeasurement == null) return;
     this.loading.set(true);
     this.error = '';
-    this.multivariateKalman.step({ measurement: this.nextMeasurement }).subscribe({
+    this.multivariateKalman.step({ measurement: this.nextMeasurement }, "static").subscribe({
       next: (result) => {
         this.history.update((h) => [result, ...h]); // newest at the top
         this.state.set(result);
@@ -124,7 +125,7 @@ export class Kalman2dDemoComponent implements OnInit {
   }
 
   resetFilter() {
-    this.multivariateKalman.reset().subscribe({
+    this.multivariateKalman.reset("static").subscribe({
       next: () => {
         this.initialised.set(false);
         this.history.set([]);

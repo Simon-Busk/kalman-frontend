@@ -123,10 +123,11 @@ export interface Point {
     `
       .plot {
         width: 100%;
-        max-width: 560px;
+        max-width: 1200px;
         background: #fafafa;
         border: 1px solid #ddd;
         border-radius: 4px;
+        margin: 2rem auto;
       }
       .grid {
         stroke: #e4e4e4;

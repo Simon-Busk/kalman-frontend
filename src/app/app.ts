@@ -11,6 +11,7 @@ import { RouterOutlet, RouterLink } from '@angular/router';
       <a routerLink="/kalman">Kalman Filter</a>
       <a routerLink="/simulation">Simulation</a>
       <a routerLink="/2dkalman">2 dimensional Kalman Filter</a>
+      <a routerLink="/velocity">1-dimensional with velocity</a>
     </nav>
     <router-outlet />
   `,

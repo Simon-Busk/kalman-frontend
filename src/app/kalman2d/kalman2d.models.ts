@@ -2,8 +2,11 @@
 
 export interface MultivariateInitRequest {
   initialState: number[];
-  processNoise: number[][];
+  processNoise?: number[][];
   measurementNoise: number[][];
+  stateTransition?: number[][];
+  observationModel?: number[][];
+  initialUncertainty?: number[][];
 }
 
 export interface MultivariateMeasurementRequest {

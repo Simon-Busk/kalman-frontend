@@ -165,7 +165,7 @@
     <p>All differences are taken as the Euclidean distance between 2 points in 2 dimensions.</p>
 
     <plot-trajectory
-      [truth]="truePoint()"
+      [truth]="{x: trueValue[0], y: trueValue[1]}"
       [measurements]="measPoints()"
       [estimates]="estPoints()" />
 

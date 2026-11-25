@@ -8,11 +8,13 @@ import { RouterLink } from '@angular/router';
   template: `
     <div id="home">
       <h1>Welcome</h1>
-      <button routerLink="/kalman">Go to Kalman Filter</button>
+      <button routerLink="/kalman">Kalman Filter</button>
       <br>
-      <button routerLink="/simulation">Go to a Simulation</button>
+      <button routerLink="/simulation">Simulation</button>
       <br>
-      <button routerLink="/2dkalman">Go to 2 dimensional Kalman filter</button>
+      <button routerLink="/2dkalman">2 dimensional Kalman filter</button>
+      <br>
+      <button routerLink="/velocity">1-dimensional  with constant velocity.</button>
     </div>
   `,
 })
