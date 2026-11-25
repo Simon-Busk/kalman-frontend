@@ -185,11 +185,14 @@
     </tbody>
   </table>
 
-  <plot-trajectory-1d
-    [truth]="truthHistory()"
-    [measurements]="measPoints()"
-    [estimates]="estPoints()">
-  </plot-trajectory-1d>
+  @if (history().length > 0) {
+    <plot-trajectory-1d
+      [truth]="truthHistory()"
+      [measurements]="measPoints()"
+      [estimates]="estPoints()">
+    </plot-trajectory-1d>
+  }
+
 
 </section>
 

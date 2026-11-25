@@ -316,7 +316,7 @@ export class TrajectoryPlotComponent {
       cy: this.sy(p.y),
       rx: Math.sqrt(this.k() * l1) * px,
       ry: Math.sqrt(this.k() * l2) * px,
-      deg: -(angle * 180) / Math.PI, // negative: SVG's y axis points down
+      deg: -(angle * 180) / Math.PI, // negative: SVG's y-axis points down
     };
   }
 }

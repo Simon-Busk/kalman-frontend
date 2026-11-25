@@ -21,9 +21,11 @@ interface Arrow {
   standalone: true,
   template: `
     <svg [attr.viewBox]="'0 0 ' + WIDTH + ' ' + height()" class="plot">
+      <text [attr.x]="WIDTH / 2" [attr.y]="PAD / 2 - 4" class="plot-title" text-anchor="middle">
+        1-dimensional plot
+      </text>
 
-
-      <text [attr.x]="WIDTH/2" [attr.y]="axisY() + 42" class="axis-title" text-anchor="middle">
+      <text [attr.x]="WIDTH / 2" [attr.y]="axisY() + 42" class="axis-title" text-anchor="middle">
         Position
       </text>
 
@@ -63,30 +65,33 @@ interface Arrow {
       <!-- the 1D axis itself -->
       <rect
         [attr.x]="PAD"
-        [attr.y]="axisY() - 3"
+        [attr.y]="axisY()"
         [attr.width]="WIDTH - 2 * PAD"
-        height="6"
+        height="1"
         rx="3"
         class="bar"
-      />
+      />&ndash;&gt;
 
       <!-- true value: one per step -->
-      <polyline [attr.points]="path(truth())" class="truth-line" />
-      @for (p of truth(); track $index) {
-        @if (showArrows()) {
-          @if (arrow(p, $index); as a) {
-            <line
-              [attr.x1]="a.x1"
-              [attr.x2]="a.x2"
-              [attr.y1]="a.y"
-              [attr.y2]="a.y"
-              class="truth-arrow"
-            />
-            <polygon [attr.points]="a.head" class="truth-arrow-head" />
-          }
+      @if (ifTruePoints()) {
+        @if (connections()) {
+          <polyline [attr.points]="path(truth())" class="truth-line" />
         }
-        <circle [attr.cx]="sx(p.x)" [attr.cy]="rowY($index)" r="6" class="truth-dot" />
-        <circle [attr.cx]="sx(p.x)" [attr.cy]="rowY($index)" r="2" class="truth-center" />
+        @for (p of truth(); track $index) {
+          @if (showArrows()) {
+            @if (arrow(p, $index); as a) {
+              <line
+                [attr.x1]="a.x1"
+                [attr.x2]="a.x2"
+                [attr.y1]="a.y"
+                [attr.y2]="a.y"
+                class="truth-arrow"
+              />
+              <polygon [attr.points]="a.head" class="truth-arrow-head" />
+            }
+          }
+          <circle [attr.cx]="sx(p.x)" [attr.cy]="rowY($index)" r="2" class="truth-dot" />
+        }
       }
 
       <!-- confidence intervals -->
@@ -106,46 +111,67 @@ interface Arrow {
       }
 
       <!-- measurements -->
-      <polyline [attr.points]="path(measurements())" class="meas-line" />
-      @for (p of measurements(); track $index) {
-        @if (showArrows()) {
-          @if (arrow(p, $index); as a) {
-            <line
-              [attr.x1]="a.x1"
-              [attr.x2]="a.x2"
-              [attr.y1]="a.y"
-              [attr.y2]="a.y"
-              class="meas-arrow"
-            />
-            <polygon [attr.points]="a.head" class="meas-arrow-head" />
-          }
+      @if (ifMeasurements()) {
+        @if (connections()) {
+          <polyline [attr.points]="path(measurements())" class="meas-line" />
         }
-        <circle [attr.cx]="sx(p.x)" [attr.cy]="rowY($index)" r="3.5" class="meas-dot" />
+        @for (p of measurements(); track $index) {
+          <circle [attr.cx]="sx(p.x)" [attr.cy]="rowY($index)" r="2" class="meas-dot" />
+        }
       }
 
       <!-- Kalman estimate -->
-      <polyline [attr.points]="path(estimates())" class="est-line" />
-      @for (p of estimates(); track $index) {
-        @if (showArrows()) {
-          @if (arrow(p, $index); as a) {
-            <line
-              [attr.x1]="a.x1"
-              [attr.x2]="a.x2"
-              [attr.y1]="a.y"
-              [attr.y2]="a.y"
-              class="est-arrow"
-            />
-            <polygon [attr.points]="a.head" class="est-arrow-head" />
-          }
+      @if (ifEstimates()) {
+        @if (connections()) {
+          <polyline [attr.points]="path(estimates())" class="est-line" />
         }
-        <circle [attr.cx]="sx(p.x)" [attr.cy]="rowY($index)" r="3.5" class="est-dot" />
+        @for (p of estimates(); track $index) {
+          @if (showArrows()) {
+            @if (arrow(p, $index); as a) {
+              <line
+                [attr.x1]="a.x1"
+                [attr.x2]="a.x2"
+                [attr.y1]="a.y"
+                [attr.y2]="a.y"
+                class="est-arrow"
+              />
+              <polygon [attr.points]="a.head" class="est-arrow-head" />
+            }
+          }
+          <circle [attr.cx]="sx(p.x)" [attr.cy]="rowY($index)" r="5" class="est-circle" />
+          <circle [attr.cx]="sx(p.x)" [attr.cy]="rowY($index)" r="2.5" class="est-dot" />
+        }
       }
     </svg>
 
     <div class="legend">
-      <span><i class="sw truth"></i>True value</span>
-      <span><i class="sw meas"></i>Measurement</span>
-      <span><i class="sw est"></i>Kalman estimate</span>
+      <label class="toggle">
+        <input
+          class="sw truth"
+          type="checkbox"
+          [checked]="ifTruePoints()"
+          (change)="ifTruePoints.set($any($event.target).checked)"
+        />
+        True value
+      </label>
+      <label class="toggle">
+        <input
+          class="sw meas"
+          type="checkbox"
+          [checked]="ifMeasurements()"
+          (change)="ifMeasurements.set($any($event.target).checked)"
+        />
+        Measurement
+      </label>
+      <label class="toggle">
+        <input
+          class="sw est"
+          type="checkbox"
+          [checked]="ifEstimates()"
+          (change)="ifEstimates.set($any($event.target).checked)"
+        />
+        Kalman estimate
+      </label>
     </div>
     <div class="legend">
       <label class="toggle">
@@ -156,6 +182,16 @@ interface Arrow {
           (change)="showArrows.set($any($event.target).checked)"
         />
         Velocity arrows
+      </label>
+
+      <label class="toggle">
+        <input
+          class="label-check"
+          type="checkbox"
+          [checked]="connections()"
+          (change)="connections.set($any($event.target).checked)"
+        />
+        Connections
       </label>
 
       <label class="toggle">
@@ -204,7 +240,7 @@ interface Arrow {
         fill: #cfcfcf;
       }
       .tick {
-        font: 10px monospace;
+        font: 8px monospace;
         fill: #777;
       }
       .truth-line {
@@ -212,12 +248,9 @@ interface Arrow {
         stroke: #888;
         stroke-width: 1.5;
         stroke-dasharray: 4 3;
+        opacity: 0.55;
       }
-      .truth-dot {
-        fill: none;
-        stroke: #888;
-        stroke-width: 2;
-      }
+
       .truth-arrow {
         stroke: #888;
         stroke-width: 1.5;
@@ -225,8 +258,9 @@ interface Arrow {
       }
       .truth-arrow-head {
         fill: #888;
+        opacity: 0.8;
       }
-      .truth-center {
+      .truth-dot {
         fill: #888;
       }
       .meas-dot {
@@ -239,29 +273,27 @@ interface Arrow {
         stroke-width: 1.5;
         opacity: 0.55;
       }
-      .meas-arrow {
-        stroke: #2a78d6;
-        stroke-width: 1.5;
-        opacity: 0.55;
-      }
-      .meas-arrow-head {
-        fill: #2a78d6;
-        opacity: 0.55;
-      }
       .est-line {
         fill: none;
         stroke: #1baf7a;
-        stroke-width: 2;
+        stroke-width: 1.5;
+        opacity: 0.55;
       }
       .est-dot {
         fill: #1baf7a;
       }
+      .est-circle {
+        fill: none;
+        stroke: #1baf7a;
+        stroke-width: 1;
+      }
       .est-arrow {
-        stroke: #0f7a55;
-        stroke-width: 2;
+        stroke: #1baf7a;
+        stroke-width: 1.5;
       }
       .est-arrow-head {
-        fill: #0f7a55;
+        fill: #1baf7a;
+        opacity: 0.8;
       }
       .interval {
         fill: #1baf7a;
@@ -297,13 +329,13 @@ interface Arrow {
         flex-shrink: 0;
       }
       .sw.truth {
-        background: #888;
+        accent-color: #888;
       }
       .sw.meas {
-        background: #2a78d6;
+        accent-color: #2a78d6;
       }
       .sw.est {
-        background: #1baf7a;
+        accent-color: #1baf7a;
       }
       .confidence-input input {
         width: 3.5rem;
@@ -315,6 +347,13 @@ interface Arrow {
       }
       .label-check:checked {
         accent-color: green;
+      }
+      .axis-title {
+        font: 8px monospace;
+        fill: #777;
+      }
+      .plot-title {
+        font: 12px monospace;
       }
     `,
   ],
@@ -332,8 +371,13 @@ export class TrajectoryPlot1DComponent {
   measurements = input<Point1D[]>([]);
   estimates = input<Point1D[]>([]);
 
+  ifTruePoints = signal(true);
+  ifMeasurements = signal(true);
+  ifEstimates = signal(true);
+
   showArrows = signal(true);
   confidenceCheck = signal(true);
+  connections = signal(true);
 
   confidence = signal(0.95);
   confidencePct = computed(() => this.confidence() * 100);
@@ -423,7 +467,7 @@ export class TrajectoryPlot1DComponent {
       x1,
       x2: base,
       y,
-      head: `${end},${y} ${base},${y - 4.5} ${base},${y + 4.5}`,
+      head: `${end},${y} ${base},${y - 3.5} ${base},${y + 3.5}`,
     };
   }
 
